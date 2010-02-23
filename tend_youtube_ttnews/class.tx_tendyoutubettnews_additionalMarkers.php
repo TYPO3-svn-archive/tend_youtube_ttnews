@@ -3,33 +3,26 @@
 require_once(PATH_tslib.'class.tslib_pibase.php');
 require_once(t3lib_extMgm::extPath("jquery")."class.tx_jquery.php");
 
-/* Dodatni hooki - uporalbjeni pri prikazu */
+/* Ekstra hooks */
 class tx_tendyoutubettnews_additionalMarkers extends tslib_pibase {
     public $prefixId = "tendyoutubettnews_hooks";
 
     function extraItemMarkerProcessor($markerArray, $row, $lConf, &$obj) {
-
-        //$this->local_cObj = t3lib_div::makeInstance('tslib_cObj');
-        /* $markerArray['###NEWS_STARTDATE###'] =
-         * $this->local_cObj->stdWrap( $row['tx_newscalendar_calendardate'], $lConf['date_stdWrap.'] ); */
 
         if ($row['tx_tendyoutubettnews_youtube_video'] == 0) {
             $markerArray['###tend_youtube_videos###'] = '';
         } else {
             /* Processing right row... */
             tx_jquery::includeLib();
-
-            // t3lib_div::Debug($obj->cObj);
+            
             /* Default CSS */
             $tmp_css = file_get_contents(t3lib_extMgm::siteRelPath("tend_youtube")."res/css/tend_youtube.css");
-
             $GLOBALS['TSFE']->additionalHeaderData[$this->prefixId."_css"]
                     = TSpagegen::inline2TempFile($tmp_css, 'css');
-
             $GLOBALS['TSFE']->additionalHeaderData[$this->prefixId."_pp_css"] =
                     '<link href="typo3conf/ext/tend_youtube/src/prettyPhoto/css/prettyPhoto.css" type="text/css" rel="stylesheet""></link>';
 
-            /* Za prettyPhoto JS*/
+            /* For prettyPhoto JS*/
             $tmp_css = file_get_contents(t3lib_extMgm::siteRelPath("tend_youtube")."src/prettyPhoto/js/jquery.prettyPhoto.js");
             $GLOBALS['TSFE']->additionalHeaderData[$this->prefixId."_pp_js"]
                     = TSpagegen::inline2TempFile($tmp_css, 'js');
@@ -52,12 +45,9 @@ class tx_tendyoutubettnews_additionalMarkers extends tslib_pibase {
             $content = $obj->cObj->substituteMarkerArray($template["total"], array(
                     "###form_name###"=>$this->prefixId,
                     "###pid###"=>$obj->pid,
-                    "###pager###" => "", // tukaj nepotreben
+                    "###pager###" => "", 
                     ));
 
-            // http://img.youtube.com/vi/Vj8g7NSbW90/default.jpg
-
-             /* Logika */
             $yt = new tx_tendyoutube();
             $ids = $row['tx_tendyoutubettnews_youtube_video'];
             $video_database = $yt->getRows("SELECT
